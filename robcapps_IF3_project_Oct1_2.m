@@ -4,7 +4,6 @@ clear all;
 clf ;
 
 % Define Parameters
-
 I_Stim = 0.4;
 R_m = 40; % Membrane resistance [MOhm]
 
@@ -17,8 +16,9 @@ alpha_3 =(t_f(3) - t_s(2)); % Time delay for cell 2
 %alpha = 0.2;
 beta = 0.2;
 
-g_s = 0.017;
 % initial synaptic conductance
+g_s = 0.017;
+
 
 Erev=-15; % Inhibition
 %Erev=15; % Excitation
@@ -26,7 +26,7 @@ Erev=-15; % Inhibition
 dt = 1.; % Timestep [ms]
 
 
-
+% Initialize Vectors
 V_plot_vect=[];
 S1_plot=[];
 V_plot_vect_2=[];
@@ -38,47 +38,36 @@ S3_plot=[];
 
 
 
-
+% Set initial Voltages
 V_vect = -1; % First element of V. i.e. V at t=0
-
 V_vect_2 = -2;
-
 V_vect_3 = -3;
 
+% Initial Conductance
 S1=0;
 S2=0;
 S3=0;
 
+
 t_end = 2500; % Total time [ms]
 
 abs_ref = 10; % Absolute refractory period [ms]
+
 ref1 = 0; % refractory period counter
 ref2 = 0;
 ref3 = 0;
 
 
-
-
-
 V_th = 10; % Threshold voltage (spike) [mV]
-
-
-
 
 
     for t = 1:t_end %loop through values of t in steps of dt ms
 
-
-
     if ~ref1
-         
     V_vect = (V_vect)-(V_vect/(R_m))+(I_Stim)-g_s*(V_vect-Erev)*(S3+S2);
-
-    
      else
     ref1 = ref1 - 1;
     V_vect = -5;
-     
     end
 
     if (V_vect > V_th) %cell spiked
@@ -87,64 +76,53 @@ V_th = 10; % Threshold voltage (spike) [mV]
 
     end
     
- 
+    if ~ref2
+        V_vect_2 = (V_vect_2)-(V_vect_2/(R_m))+ I_Stim -g_s*(V_vect_2-Erev)*(S1+S3);
+    else
+        ref2 = ref2 - 1;
+        V_vect_2 = -5;
+    end
 
-
-      
-if ~ref2
-
-    V_vect_2 = (V_vect_2)-(V_vect_2/(R_m))+ I_Stim -g_s*(V_vect_2-Erev)*(S1+S3);
-
-else
-    ref2 = ref2 - 1;
-    V_vect_2 = -5;
-       
-end
-%if statement below says what to do if voltage crosses threshold 
-if (V_vect_2 > V_th) %cell spiked
-    V_vect_2 = 50; %set vector that will be plotted to show a spike here 
-    ref2 = abs_ref;
-
-end
+    % if statement below says what to do if voltage crosses threshold 
+    if (V_vect_2 > V_th) %cell spiked
+        V_vect_2 = 50; %set vector that will be plotted to show a spike here 
+        ref2 = abs_ref;
+    end
 
    
 
     
- if ~ref3
-     
-    V_vect_3 = (V_vect_3)-(V_vect_3/(R_m))+ I_Stim -g_s*(V_vect_3-Erev)*(S2+S1);
-    
-  
-else
-    ref3 = ref3 - 1;
-    V_vect_3 = -5;
-     
-end
-%if statement below says what to do if voltage crosses threshold 
-if (V_vect_3 > V_th) %cell spiked
-    V_vect_3 = 50; %set vector that will be plotted to show a spike here 
-    ref3 = abs_ref;
-           
-end
+     if ~ref3
+        V_vect_3 = (V_vect_3)-(V_vect_3/(R_m))+ I_Stim -g_s*(V_vect_3-Erev)*(S2+S1);
+    else
+        ref3 = ref3 - 1;
+        V_vect_3 = -5;
+    end
 
+    %if statement below says what to do if voltage crosses threshold 
+    if (V_vect_3 > V_th) %cell spiked
+        V_vect_3 = 50; %set vector that will be plotted to show a spike here 
+        ref3 = abs_ref;
+    end
+
+% loops through all time values, calculates synaptic conductance
 for t= 1:t_end
   S1=S1+alpha_1*(1-S1)/(1+exp(-10*(V_vect-V_th)))-beta*S1;
   S2=S2+alpha_2*(1-S2)/(1+exp(-10*(V_vect_2-V_th)))-beta*S2;
   S3=S3+alpha_3*(1-S3)/(1+exp(-10*(V_vect_3-V_th)))-beta*S3;
 end
 
-
+% Initializes vectors
 S3_plot = [S3_plot S3];
 S2_plot = [S2_plot S2];
 S1_plot=[S1_plot S1];
+
 V_plot_vect = [V_plot_vect V_vect]; % With no spike, plot actual voltage V
-
 V_plot_vect_2 = [V_plot_vect_2 V_vect_2];
-
 V_plot_vect_3 = [V_plot_vect_3 V_vect_3];
 
 
-    end
+end
 
 % Plot Voltage
 
