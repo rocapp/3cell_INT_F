@@ -13,7 +13,6 @@ t_s = [3 2 1]; % Time sent[s]
 alpha_1 =(t_f(1) - t_s(3)); % Time delay for cell 1
 alpha_2 =(t_f(2) - t_s(1)); % Time delay for cell 2
 alpha_3 =(t_f(3) - t_s(2)); % Time delay for cell 2
-%alpha = 0.2;
 beta = 0.2;
 
 % initial synaptic conductance
@@ -179,8 +178,6 @@ else
     lastSpike = length(SpikeTimes);
 end
 
-
-
 Period = [];
 tau12 = [];
 Tau12 = [];
@@ -190,7 +187,6 @@ Tau13 = [];
 i = 1;
 
 % Find period, tau
-
 for i=1:lastSpike
 
 if i < lastSpike
@@ -209,23 +205,18 @@ Tau13 = [Tau13 tau13];
 end
 
 % Find the transpose of the matrices
-
 tTau12 = transpose(Tau12);
 tTau13 = transpose(Tau13);
 tPeriod = transpose(Period);
 
 % Find Phase12 and Phase 13
-
 Phase_12 = (tTau12/(tPeriod));
-
 
 Phase_13 = (tTau13/(tPeriod));
 
 % Modulo 1
-
-    Phi_13 = mod(Phase_13,1);
-
-    Phi_12 = mod(Phase_12,1);
+Phi_13 = mod(Phase_13,1);
+Phi_12 = mod(Phase_12,1);
     
 % Length of the Phase matrices    
 
